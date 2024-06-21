@@ -46,32 +46,51 @@ typedef enum {
 	// Request previous packet to be resent.
 	// No payload.
 	GNClink_PacketType_RequestResend,
+
 	// Request global hash.
 	// No payload.
+	// Response contains the global has as a 32 bit unsigned integer.
 	GNClink_PacketType_GetGlobalHash,
-	// Contains response to GetGlobalHash.
-	// Payload contains the global has as a 32 bit unsigned integer.
-	GNClink_PacketType_GetGlobalHashResponse,
+	
 	// Request a list of values to be returned.
 	// Payload should contain an 8 bit unsigned integer representing the
 	// number of IDs in the list, and a contiguous list of value IDs, encoded
 	// as 16 bit unsigned integers.
-	GNClink_PacketType_GetValueList,
-	// Contains response to GetValueList.
-	// Payload contains the list of values arranged contiguously
+	// Response payload contains the list of values arranged contiguously
 	// no matter their size.
-	GNClink_PacketType_GetValueListResponse,
+	GNClink_PacketType_GetValueList,
+
+	// Request that a list of values should be set
+	// Payload should contain an 8 bit unsigned integer representing the
+	// number of IDs in the list, and a contiguous list of value IDs
+	// and the corresponding values, with the IDs encoded
+	// as 16 bit unsigned integers
+	// Response should contain no payload to indicate operation completed
+	// successfully.
 	GNClink_PacketType_SetValueList,
-	GNClink_PacketType_SetValueListResponse,
+
 	GNClink_PacketType_SaveValueList,
-	GNClink_PacketType_SaveValueListResponse,
+	
 	GNClink_PacketType_LoadValueList,
-	GNClink_PacketType_LoadValueListResponse
+	
+	// Request the number of accessible global variables
+	// Response should contain the corresponding
+	// 16 bit unsigned integer
+	GNClink_PacketType_GetValueCount,
+
+	// Request the name of a global variable at a given
+	// ID. Outbound payload should contain a 16 bit ID of a variable.
+	// The response packet should contain an 8 bit number
+	// respresenting the variable type followed by a 
+	// null-terminated string
+	// for the variable name.
+	GNClink_PacketType_GetValueName,
 } GNClink_PacketType;
 
 typedef enum {
 	GNClink_PacketFlags_None = 0, // no flags
-	GNClink_PacketFlags_NoResponse = 1 << 0 // no response is expected for this packet no matter the error state
+	GNClink_PacketFlags_NoResponse = 1 << 0, // no response is expected for this packet no matter the error state
+	GNClink_PacketFlags_Response = 1 << 1 // this packet is a response packet, sent by the downstream device
 } GNClink_PacketFlags;
 
 typedef struct __GNCLINK_PACKED {

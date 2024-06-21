@@ -23,6 +23,9 @@ bool GNClink_Check_Packet(uint8_t* packetPointer);
 // Get packet type
 GNClink_PacketType GNClink_Get_Packet_Type(uint8_t* packetPointer);
 
+// Get packet flags
+GNClink_PacketFlags GNClink_Get_Packet_Flags(uint8_t* packetPointer);
+
 // Returns pointer to payload section of packet buffer.
 // Maximum payload size is defined by GNCLINK_MAX_PACKET_PAYLOAD_LENGTH.
 uint8_t* GNClink_Get_Frame_Payload_Pointer(uint8_t* framePointer);
