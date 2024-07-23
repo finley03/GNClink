@@ -111,7 +111,8 @@ bool GNClink_Get_Frame(uint8_t* packetPointer, uint8_t* framePointer, GNClink_Fr
 	}
 
 	// populate footer
-	footer->crc = CRC8(framePointer, GNCLINK_FRAME_HEADER_LENGTH + GNCLINK_FRAME_PAYLOAD_LENGTH);
+	footer->footerMagic = GNCLINK_FRAME_FOOTERMAGIC;
+	footer->crc = CRC8(framePointer, GNCLINK_FRAME_TOTAL_LENGTH - 1);
 
 	return true;
 }
@@ -119,9 +120,12 @@ bool GNClink_Get_Frame(uint8_t* packetPointer, uint8_t* framePointer, GNClink_Fr
 bool GNClink_Check_Frame(uint8_t* framePointer) {
 	// get pointer to header
 	GNClink_FrameHeader* header = (GNClink_FrameHeader*)framePointer;
+	// get pointer to frame footer
+	GNClink_FrameFooter* footer = (GNClink_FrameFooter*)(framePointer + GNCLINK_FRAME_HEADER_LENGTH + GNCLINK_FRAME_PAYLOAD_LENGTH);
 
 	// check magic
 	if (header->magic != GNCLINK_FRAME_MAGIC) return false;
+	if (footer->footerMagic != GNCLINK_FRAME_FOOTERMAGIC) return false;
 
 	// check index
 	if (header->index >= GNCLINK_MAX_FRAMES_PER_PACKET) return false;
@@ -161,7 +165,8 @@ void GNClink_Construct_RequestResendFrame(uint8_t* framePointer) {
 	header->flags = GNClink_FrameFlags_RequestResend;
 
 	// populate footer
-	footer->crc = CRC8(framePointer, GNCLINK_FRAME_HEADER_LENGTH + GNCLINK_FRAME_PAYLOAD_LENGTH);
+	footer->footerMagic = GNCLINK_FRAME_FOOTERMAGIC;
+	footer->crc = CRC8(framePointer, GNCLINK_FRAME_TOTAL_LENGTH - 1);
 }
 
 

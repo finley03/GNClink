@@ -69,8 +69,20 @@ typedef enum {
 	// successfully.
 	GNClink_PacketType_SetValueList,
 
+	// Request that a list of values be saved to NVM.
+	// Payload should contain an 8 bit unsigned integer representing the
+	// number of IDs in the list, and a congiguous list of value IDs encoded
+	// as 16 bit unsigned integers.
+	// Response should contain no payload to indicate operation completed
+	// successfully.
 	GNClink_PacketType_SaveValueList,
 	
+	// Request that a list of values be loaded from NVM.
+	// Payload should contain an 8 bit unsigned integer representing the
+	// number of IDs in the list, and a congiguous list of value IDs encoded
+	// as 16 bit unsigned integers.
+	// Response should contain no payload to indicate operation completed
+	// successfully.
 	GNClink_PacketType_LoadValueList,
 	
 	// Request the number of accessible global variables
@@ -128,10 +140,12 @@ typedef struct __GNCLINK_PACKED {
 } GNClink_FrameHeader;
 
 typedef struct __GNCLINK_PACKED {
+	uint8_t footerMagic;
 	uint8_t crc;
 } GNClink_FrameFooter;
 
 #define GNCLINK_FRAME_MAGIC 0xAE
+#define GNCLINK_FRAME_FOOTERMAGIC 0xAF
 #define GNCLINK_FRAME_HEADER_LENGTH (sizeof(GNClink_FrameHeader))
 #define GNCLINK_FRAME_FOOTER_LENGTH (sizeof(GNClink_FrameFooter))
 #define GNCLINK_FRAME_PAYLOAD_LENGTH 16

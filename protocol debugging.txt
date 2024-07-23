@@ -1,0 +1,11 @@
+System fails if requested frame resend also fails to send.
+Frequency: O(n^2) failed frames
+Cause: Unconfigured timeouts on the ground station
+Solution: Configure timeouts
+Status: Fixed
+
+Ground station reads incorrect names of variables
+Cause: Ground station unaware when zero bytes are read and the connection times out, reinterprets previous data
+Solution: Check if data is received at the frame level, redo entire transaction if this fails. Also check packet passes test and redo transaction if that fails too.
+Status: Fixed
+
