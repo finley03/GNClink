@@ -97,12 +97,41 @@ typedef enum {
 	// null-terminated string
 	// for the variable name.
 	GNClink_PacketType_GetValueName,
+
+	// Request process count.
+	// No payload.
+	// Response contains the number of processes as a 16 bit unsigned integer.
+	GNClink_PacketType_GetProcessCount,
+
+	// Request the next enumeratable process ID
+	// Payload should be empty if there are no known processes,
+	// and the process with the lowest ID will be returned.
+	// After this the payload should be the previous enumerated
+	// process ID (32 bit).
+	// Response packet contains the 32 bit unsigned process ID.
+	// An empty response packet indicates no more enumeratable process IDs.
+	GNClink_PacketType_EnumerateProcesses,
+
+	// Request the name of a process at a given
+	// ID. Outbound payload should contain a 32 bit ID of a process.
+	// The response packet should contain a null-terminated string
+	// of the process name.
+	// An empty response packet indicates that the process does not exist.
+	GNClink_PacketType_GetProcessName,
+
+	// Request diagnostic information about a particular process
+	// Outbound packet payload should contain the process ID.
+	// Response packet should contain a packed struct of data as
+	// described by GNClink_PacketPayload_GetProcessDiagnostics_Response
+	// An empty response packet indicates that the process does not exist.
+	GNClink_PacketType_GetProcessDiagnostics,
 } GNClink_PacketType;
 
 typedef enum {
 	GNClink_PacketFlags_None = 0, // no flags
 	GNClink_PacketFlags_NoResponse = 1 << 0, // no response is expected for this packet no matter the error state
-	GNClink_PacketFlags_Response = 1 << 1 // this packet is a response packet, sent by the downstream device
+	GNClink_PacketFlags_Response = 1 << 1, // this packet is a response packet, sent by the downstream device
+	GNClink_PacketFlags_Error = 1 << 2 // error has occured in processing a request
 } GNClink_PacketFlags;
 
 typedef struct __GNCLINK_PACKED {
@@ -157,6 +186,17 @@ typedef struct __GNCLINK_PACKED {
 } GNClink_FramePayload_RequestResend;
 
 #define GNCLINK_MAX_FRAMES_PER_PACKET ((GNCLINK_PACKET_MAX_TOTAL_LENGTH+GNCLINK_FRAME_PAYLOAD_LENGTH-1)/GNCLINK_FRAME_PAYLOAD_LENGTH)
+
+
+// Payload structs for different commands
+
+typedef struct __GNCLINK_PACKED {
+	uint32_t call_count; // number of process calls per second
+	uint32_t CPU_time; // CPU time used per second in microseconds
+	uint32_t stack_use; // number of bytes of stack used
+	uint32_t max_stack; // maximum observed stack usage
+	uint32_t available_stack; // available stack before overflow
+} GNClink_PacketPayload_GetProcessDiagnostics_Response;
 
 #ifdef _MSC_VER
 #pragma pack(pop)

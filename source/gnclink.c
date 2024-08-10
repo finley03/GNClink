@@ -68,6 +68,13 @@ GNClink_PacketFlags GNClink_Get_Packet_Flags(uint8_t* packetPointer) {
 	return (GNClink_PacketType)header->packetFlags;
 }
 
+int GNClink_Get_Packet_Payload_Size(uint8_t* packetPointer) {
+	// get pointer to header
+	GNClink_PacketHeader* header = (GNClink_PacketHeader*)packetPointer;
+
+	return (int)header->packetLength - GNCLINK_PACKET_HEADER_LENGTH - GNCLINK_PACKET_FOOTER_LENGTH;
+}
+
 
 uint8_t* GNClink_Get_Frame_Payload_Pointer(uint8_t* framePointer) {
 	return framePointer + GNCLINK_FRAME_HEADER_LENGTH;
